@@ -1,7 +1,7 @@
 // src/utils/loadSecrets.ts
 import { SecretsManagerClient, GetSecretValueCommand } from "@aws-sdk/client-secrets-manager";
 
-const secretName = "nestcrm/main_backend";
+const secretName = "NestCRM/Tenant-Dashboard";
 const region = "us-east-2";
 
 let isInitialized = false;
