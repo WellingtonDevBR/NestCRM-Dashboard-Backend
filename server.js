@@ -3,18 +3,17 @@ const cors = require('cors');
 
 const app = express();
 app.use(express.json());
-app.use(cors()); // habilita CORS
 
-app.use(cors({
-  origin: (origin, callback) => {
-    if (origin?.endsWith('.nestcrm.com.au')) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true,
-}));
+// app.use(cors({
+//   origin: (origin, callback) => {
+//     if (origin?.endsWith('.nestcrm.com.au')) {
+//       callback(null, true);
+//     } else {
+//       callback(new Error('Not allowed by CORS'));
+//     }
+//   },
+//   credentials: true,
+// }));
 
 // ✅ Health check para o ALB
 app.get('/', (req, res) => {
