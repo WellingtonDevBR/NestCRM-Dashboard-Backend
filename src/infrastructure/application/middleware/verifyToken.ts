@@ -5,18 +5,11 @@ export const verifyToken = async (
     req: Request,
     res: Response,
     next: NextFunction
-): Promise<void> => {
-    const authHeader = req.headers.authorization;
+): Promise<any> => {
+    const token = req.cookies?.token;
 
-    if (!authHeader) {
-        res.status(401).json({ error: 'Missing Authorization header' });
-        return;
-    }
-
-    const token = authHeader.split(' ')[1];
     if (!token) {
-        res.status(401).json({ error: 'Missing token' });
-        return;
+        return res.status(401).json({ error: 'Token missing in cookie' });
     }
 
     try {
@@ -26,8 +19,7 @@ export const verifyToken = async (
         const subdomainFromRequest = req.hostname.split('.')[0];
 
         if (subdomainFromToken !== subdomainFromRequest) {
-            res.status(403).json({ error: 'Subdomain mismatch' });
-            return;
+            return res.status(403).json({ error: 'Subdomain mismatch' });
         }
 
         req.user = decoded;
@@ -37,3 +29,4 @@ export const verifyToken = async (
         res.status(403).json({ error: 'Invalid or expired token' });
     }
 };
+
