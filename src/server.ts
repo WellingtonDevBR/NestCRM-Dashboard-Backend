@@ -6,6 +6,7 @@ import { verifyToken } from './infrastructure/application/middleware/verifyToken
 import { Tenant } from './domain/types/tenant';
 
 import dotenv from 'dotenv';
+import { verifySubdomain } from "./infrastructure/application/middleware/verifySubdomain";
 dotenv.config();
 
 declare global {
@@ -38,6 +39,7 @@ const corsOptions: CorsOptionsDelegate = (req, callback) => {
 
 app.use(cors(corsOptions));
 
+app.use('/', verifySubdomain);
 
 // ✅ Dummy protected data
 app.get('/api/data', verifyToken, (req: Request, res: Response) => {
