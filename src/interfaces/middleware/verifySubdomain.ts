@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { getTenantBySubdomain } from "../../database/getTenantBySubdomain";
+import { getTenantBySubdomain } from "../../infrastructure/database/getTenantBySubdomain";
 
 export async function verifySubdomain(req: Request, res: Response, next: NextFunction): Promise<any> {
     try {
