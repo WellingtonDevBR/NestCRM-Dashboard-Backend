@@ -52,13 +52,8 @@ app.get('/api/data', verifyToken, (req: Request, res: Response) => {
 
 app.post('/api/logout', (req: Request, res: Response) => {
   res.setHeader("Set-Cookie", [
-    // 🧹 Clear cookie from main domain
-    `authToken=; Path=/; Domain=nestcrm.com.au; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; Secure; SameSite=None`,
-
-    // 🧹 Clear cookie from current subdomain
-    `authToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; Secure; SameSite=None`,
+    `token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; Secure; SameSite=None`,
   ]);
-
   res.status(200).json({ message: 'Logged out successfully' });
 });
 
