@@ -2,11 +2,13 @@ import express, { Request, Response, NextFunction } from "express";
 import cors, { CorsOptionsDelegate } from "cors";
 import cookieParser from "cookie-parser";
 import 'express-async-errors';
-import { verifyToken } from './infrastructure/application/middleware/verifyToken';
 import { Tenant } from './domain/types/tenant';
 
 import dotenv from 'dotenv';
-import { verifySubdomain } from "./infrastructure/application/middleware/verifySubdomain";
+import { verifySubdomain } from "./interfaces/middleware/verifySubdomain";
+import { verifyToken } from "./interfaces/middleware/verifyToken";
+import { CustomFieldController } from "./interfaces/controllers/CustomFieldController";
+import customFieldRoutes from "./interfaces/routes/customFieldRoutes";
 dotenv.config();
 
 declare global {
@@ -25,7 +27,6 @@ app.use(cookieParser());
 
 // 🌍 Configure CORS
 const allowedOrigins: (string | RegExp)[] = [/\.nestcrm\.com\.au$/, 'https://nestcrm.com.au', 'https://www.nestcrm.com.au', 'https://*.nestcrm.com.au'];
-
 const corsOptions: CorsOptionsDelegate = (req, callback) => {
   const origin = req.headers.origin as string | undefined;
   const isAllowed = !origin || allowedOrigins.some(o =>
@@ -38,8 +39,9 @@ const corsOptions: CorsOptionsDelegate = (req, callback) => {
 };
 
 app.use(cors(corsOptions));
-
 app.use('/', verifySubdomain);
+
+app.use("/api/custom-fields", customFieldRoutes);
 
 // ✅ Dummy protected data
 app.get('/api/data', verifyToken, (req: Request, res: Response) => {
@@ -56,7 +58,6 @@ app.post('/api/logout', (req: Request, res: Response) => {
   ]);
   res.status(200).json({ message: 'Logged out successfully' });
 });
-
 
 // ✅ Health check
 app.get('/api/status', (_req: Request, res: Response) => {
