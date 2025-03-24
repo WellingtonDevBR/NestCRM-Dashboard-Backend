@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { v4 as uuidv4 } from "uuid";
 import { DynamoCustomerRepository } from "../../infrastructure/repositories/dynamoCustomerRepository";
-import { CustomerUseCase } from "../../application/usecases/CustomerUseCase";
+import { CustomerUseCase } from "../../application/usecases/customerUseCase";
 
 const repository = new DynamoCustomerRepository();
 const useCase = new CustomerUseCase(repository);
