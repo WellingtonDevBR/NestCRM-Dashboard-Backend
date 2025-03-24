@@ -25,7 +25,6 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 
-// 🌍 Configure CORS
 const allowedOrigins: (string | RegExp)[] = [/\.nestcrm\.com\.au$/, 'https://nestcrm.com.au', 'https://www.nestcrm.com.au', 'https://*.nestcrm.com.au'];
 const corsOptions: CorsOptionsDelegate = (req, callback) => {
   const origin = req.headers.origin as string | undefined;
@@ -43,7 +42,6 @@ app.use('/', verifySubdomain);
 
 app.use("/api/custom-fields", customFieldRoutes);
 
-// ✅ Dummy protected data
 app.get('/api/data', verifyToken, (req: Request, res: Response) => {
   res.json({
     tenant: req.hostname,
@@ -59,17 +57,14 @@ app.post('/api/logout', (req: Request, res: Response) => {
   res.status(200).json({ message: 'Logged out successfully' });
 });
 
-// ✅ Health check
 app.get('/api/status', (_req: Request, res: Response) => {
   res.send('✅ EC2 instance is running and healthy!');
 });
 
-// ✅ Fallback route
 app.use((_req: Request, res: Response) => {
   res.status(404).json({ error: 'Not Found' });
 });
 
-// ✅ Start server
 app.listen(3000, '0.0.0.0', () => {
   console.log('✅ Backend API server running on port 3000');
 });
