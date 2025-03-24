@@ -7,7 +7,7 @@ const useCase = new CustomFieldUseCase(repository);
 
 export class CustomFieldController {
     static async saveFields(req: Request, res: Response): Promise<any> {
-        const tenantId = req.tenant?.ID;
+        const tenantId = req.tenant?.Subdomain;
         const fields = req.body.fields;
 
         if (!tenantId || !Array.isArray(fields)) {
@@ -19,7 +19,7 @@ export class CustomFieldController {
     }
 
     static async getFields(req: Request, res: Response): Promise<any> {
-        const tenantId = req.tenant?.ID;
+        const tenantId = req.tenant?.Subdomain;
         if (!tenantId) {
             return res.status(400).json({ error: "Tenant not found" });
         }

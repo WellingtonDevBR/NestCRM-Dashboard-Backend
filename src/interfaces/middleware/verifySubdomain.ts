@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { getTenantBySubdomain } from "../../infrastructure/database/getTenantBySubdomain";
 
-export async function verifySubdomain(req: Request, res: Response, next: NextFunction): Promise<any> {
+export async function verifySubdomain(req: any, res: Response, next: NextFunction): Promise<any> {
     try {
         const host = req.hostname;
         const mainDomain = "nestcrm.com.au";

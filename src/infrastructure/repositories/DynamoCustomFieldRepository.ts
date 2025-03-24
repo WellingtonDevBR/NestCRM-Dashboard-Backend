@@ -4,14 +4,13 @@ import { initDynamoDB } from "../database/DynamoDBClient";
 import { CustomField } from "../../domain/types/customFields";
 
 export class DynamoCustomFieldRepository implements CustomFieldRepository {
-    private tableName = "NestCRM-CustomFieldDefinitions";
-
     async saveFields(tenantId: string, fields: CustomField[]): Promise<void> {
         const client = await initDynamoDB();
+        const tableName = `NestCRM-${tenantId}-CustomFields`;
         await client.send(new PutCommand({
-            TableName: this.tableName,
+            TableName: tableName,
             Item: {
-                TenantId: tenantId,
+                PK: `CustomFieldSet#${tenantId}`,
                 Fields: fields,
             },
         }));
@@ -19,9 +18,10 @@ export class DynamoCustomFieldRepository implements CustomFieldRepository {
 
     async getFields(tenantId: string): Promise<CustomField[]> {
         const client = await initDynamoDB();
+        const tableName = `NestCRM-${tenantId}-CustomFields`;
         const result = await client.send(new GetCommand({
-            TableName: this.tableName,
-            Key: { TenantId: tenantId },
+            TableName: tableName,
+            Key: { PK: `CustomFieldSet#${tenantId}` },
         }));
 
         return result.Item?.Fields || [];

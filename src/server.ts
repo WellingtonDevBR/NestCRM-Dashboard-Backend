@@ -8,6 +8,7 @@ import dotenv from 'dotenv';
 import { verifySubdomain } from "./interfaces/middleware/verifySubdomain";
 import { verifyToken } from "./interfaces/middleware/verifyToken";
 import { customFieldRoutes } from "./interfaces/routes/customFieldRoutes";
+import { customerRoutes } from "./interfaces/routes/customerRoutes";
 dotenv.config();
 
 declare global {
@@ -40,6 +41,7 @@ app.use(cors(corsOptions));
 app.use('/', verifySubdomain);
 
 app.use("/api/custom-fields", customFieldRoutes);
+app.use("/api/customer", customerRoutes);
 
 app.get('/api/data', verifyToken, (req: Request, res: Response) => {
   res.json({

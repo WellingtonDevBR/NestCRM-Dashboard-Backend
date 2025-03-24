@@ -5,5 +5,5 @@ export interface CustomField {
     label: string;
     type: CustomFieldType;
     required: boolean;
-    options?: string[]; // optional for select
+    options?: string[];
 }
