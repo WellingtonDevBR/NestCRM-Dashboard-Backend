@@ -2,10 +2,11 @@ import express, { Request, Response, NextFunction } from "express";
 import cors, { CorsOptionsDelegate } from "cors";
 import cookieParser from "cookie-parser";
 import 'express-async-errors';
-import { getTenantBySubdomain } from './infrastructure/database/getTenantBySubdomain';
-import { extractSubdomain } from './utils/extractSubdomain';
 import { verifyToken } from './infrastructure/application/middleware/verifyToken';
 import { Tenant } from './domain/types/tenant';
+
+import dotenv from 'dotenv';
+dotenv.config();
 
 declare global {
   namespace Express {
@@ -22,7 +23,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 // 🌍 Configure CORS
-const allowedOrigins: (string | RegExp)[] = [/\.nestcrm\.com\.au$/, 'https://nestcrm.com.au'];
+const allowedOrigins: (string | RegExp)[] = [/\.nestcrm\.com\.au$/, 'https://nestcrm.com.au', 'https://www.nestcrm.com.au', 'https://*.nestcrm.com.au'];
 
 const corsOptions: CorsOptionsDelegate = (req, callback) => {
   const origin = req.headers.origin as string | undefined;
@@ -38,45 +39,6 @@ const corsOptions: CorsOptionsDelegate = (req, callback) => {
 app.use(cors(corsOptions));
 
 
-/**
- * 🛡️ Middleware to validate tenant
- * Checks the subdomain from hostname and fetches tenant info
- */
-app.use(async (req: Request, res: Response, next: NextFunction) => {
-  const host = req.hostname;
-  const subdomain = extractSubdomain(host);
-
-  // Allow root domain to bypass tenant check
-  if (host === 'nestcrm.com.au') return next();
-
-  try {
-    const tenant = await getTenantBySubdomain(subdomain);
-    if (!tenant) {
-      return res.status(404).json({ error: 'Tenant not found.' });
-    }
-
-    req.tenant = tenant;
-    next();
-  } catch (err) {
-    console.error("❌ Error in tenant verification middleware:", err);
-    return res.status(500).json({ error: "Internal server error." });
-  }
-});
-
-// ✅ Health check
-app.get('/', (_req: Request, res: Response) => {
-  res.send('✅ EC2 instance is running and healthy!');
-});
-
-// ✅ Status route (protected)
-app.get('/api/status', verifyToken, (req: Request, res: Response) => {
-  res.json({
-    message: '🟢 API is working fine!',
-    tenant: req.tenant?.Subdomain,
-    user: req.user
-  });
-});
-
 // ✅ Dummy protected data
 app.get('/api/data', verifyToken, (req: Request, res: Response) => {
   res.json({
@@ -84,6 +46,11 @@ app.get('/api/data', verifyToken, (req: Request, res: Response) => {
     user: req.user,
     data: ['Item 1', 'Item 2', 'Item 3'],
   });
+});
+
+// ✅ Health check
+app.get('/api/status', (_req: Request, res: Response) => {
+  res.send('✅ EC2 instance is running and healthy!');
 });
 
 // ✅ Fallback route
