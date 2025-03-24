@@ -52,8 +52,8 @@ app.post('/api/logout', (req: Request, res: Response) => {
 
 // 👇 All tenant-protected routes
 app.use('/', verifySubdomain);
-app.use("/api/custom-fields", customFieldRoutes);
-app.use("/api/customer", customerRoutes);
+app.use("/api/settings/custom-fields", verifyToken, customFieldRoutes);
+app.use("/api/customer", verifyToken, customerRoutes);
 app.get('/api/data', verifyToken, (req: Request, res: Response) => {
   res.json({
     tenant: req.hostname,
