@@ -7,8 +7,7 @@ import { Tenant } from './domain/types/tenant';
 import dotenv from 'dotenv';
 import { verifySubdomain } from "./interfaces/middleware/verifySubdomain";
 import { verifyToken } from "./interfaces/middleware/verifyToken";
-import { CustomFieldController } from "./interfaces/controllers/CustomFieldController";
-import customFieldRoutes from "./interfaces/routes/customFieldRoutes";
+import { customFieldRoutes } from "./interfaces/routes/customFieldRoutes";
 dotenv.config();
 
 declare global {
