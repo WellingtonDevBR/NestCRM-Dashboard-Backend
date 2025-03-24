@@ -51,26 +51,10 @@ app.get('/api/data', verifyToken, (req: Request, res: Response) => {
 });
 
 app.post('/api/logout', (req: Request, res: Response) => {
-  res.setHeader("Access-Control-Allow-Origin", req.headers.origin || "https://nestcrm.com.au");
-  res.setHeader("Access-Control-Allow-Credentials", "true");
-
-  res.cookie("token", "", {
-    domain: ".nestcrm.com.au",
-    path: "/",
-    httpOnly: true,
-    secure: true,
-    sameSite: "none",
-    expires: new Date(0),
-  });
-
-  // 🧼 Clear __vercel_toolbar too
-  res.cookie("__vercel_toolbar", "", {
-    domain: "nestcrm.com.au",
-    path: "/",
-    expires: new Date(0),
-  });
-
-  res.status(200).json({ message: "✅ Logged out + toolbar cleared" });
+  res.setHeader("Set-Cookie", [
+    `token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; Secure; SameSite=None`,
+  ]);
+  res.status(200).json({ message: 'Logged out successfully' });
 });
 
 
