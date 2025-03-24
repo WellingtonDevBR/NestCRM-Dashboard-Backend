@@ -1,4 +1,4 @@
-import { CustomerRepository } from "../../domain/repositories/CustomerRepository";
+import { CustomerRepository } from "../../domain/repositories/customerRepository";
 import { Customer } from "../../domain/types/customer";
 
 export class CustomerUseCase {

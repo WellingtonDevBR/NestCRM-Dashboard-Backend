@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { CustomFieldController } from "../controllers/CustomFieldController";
 import { verifyToken } from "../middleware/verifyToken";
+import { CustomFieldController } from "../controllers/customFieldController";
 
 export const customFieldRoutes = Router();
 

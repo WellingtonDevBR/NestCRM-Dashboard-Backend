@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { DynamoCustomFieldRepository } from "../../infrastructure/repositories/DynamoCustomFieldRepository";
-import { CustomFieldUseCase } from "../../application/usecases/CustomFieldUseCase";
+import { DynamoCustomFieldRepository } from "../../infrastructure/repositories/dynamoCustomFieldRepository";
+import { CustomFieldUseCase } from "../../application/usecases/customFieldUseCase";
 
 const repository = new DynamoCustomFieldRepository();
 const useCase = new CustomFieldUseCase(repository);

@@ -1,6 +1,6 @@
-import { CustomFieldRepository } from "../../domain/repositories/CustomFieldRepository";
+import { CustomFieldRepository } from "../../domain/repositories/customFieldRepository";
 import { PutCommand, GetCommand } from "@aws-sdk/lib-dynamodb";
-import { initDynamoDB } from "../database/DynamoDBClient";
+import { initDynamoDB } from "../database/dynamoDBClient";
 import { CustomField } from "../../domain/types/customFields";
 
 export class DynamoCustomFieldRepository implements CustomFieldRepository {

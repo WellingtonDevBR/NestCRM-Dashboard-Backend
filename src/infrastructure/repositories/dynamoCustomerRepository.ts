@@ -1,7 +1,7 @@
 import { PutCommand, ScanCommand } from "@aws-sdk/lib-dynamodb";
-import { initDynamoDB } from "../database/DynamoDBClient";
+import { initDynamoDB } from "../database/dynamoDBClient";
 import { Customer } from "../../domain/types/customer";
-import { CustomerRepository } from "../../domain/repositories/CustomerRepository";
+import { CustomerRepository } from "../../domain/repositories/customerRepository";
 
 export class DynamoCustomerRepository implements CustomerRepository {
     getTableName(subdomain: string): string {

@@ -1,4 +1,4 @@
-import { CustomFieldRepository } from "../../domain/repositories/CustomFieldRepository";
+import { CustomFieldRepository } from "../../domain/repositories/customFieldRepository";
 import { CustomField } from "../../domain/types/customFields";
 
 export class CustomFieldUseCase {
