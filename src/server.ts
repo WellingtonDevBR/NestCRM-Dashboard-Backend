@@ -22,9 +22,6 @@ declare global {
 
 const app = express();
 
-app.use(express.json());
-app.use(cookieParser());
-
 const allowedOrigins: (string | RegExp)[] = [/\.nestcrm\.com\.au$/, 'https://nestcrm.com.au', 'https://www.nestcrm.com.au', 'https://*.nestcrm.com.au'];
 const corsOptions: CorsOptionsDelegate = (req, callback) => {
   const origin = req.headers.origin as string | undefined;
@@ -38,19 +35,14 @@ const corsOptions: CorsOptionsDelegate = (req, callback) => {
 };
 
 app.use(cors(corsOptions));
-app.use('/', verifySubdomain);
 
-app.use("/api/custom-fields", customFieldRoutes);
-app.use("/api/customer", customerRoutes);
+app.use(cookieParser());
+app.use(express.json());
 
-app.get('/api/data', verifyToken, (req: Request, res: Response) => {
-  res.json({
-    tenant: req.hostname,
-    user: req.user,
-    data: ['Item 1', 'Item 2', 'Item 3'],
-  });
+// 👇 Public routes (no subdomain check)
+app.get('/api/status', (_req: Request, res: Response) => {
+  res.send('✅ EC2 instance is running and healthy!');
 });
-
 app.post('/api/logout', (req: Request, res: Response) => {
   res.setHeader("Set-Cookie", [
     `token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; Secure; SameSite=None`,
@@ -58,8 +50,16 @@ app.post('/api/logout', (req: Request, res: Response) => {
   res.status(200).json({ message: 'Logged out successfully' });
 });
 
-app.get('/api/status', (_req: Request, res: Response) => {
-  res.send('✅ EC2 instance is running and healthy!');
+// 👇 All tenant-protected routes
+app.use('/', verifySubdomain);
+app.use("/api/custom-fields", customFieldRoutes);
+app.use("/api/customer", customerRoutes);
+app.get('/api/data', verifyToken, (req: Request, res: Response) => {
+  res.json({
+    tenant: req.hostname,
+    user: req.user,
+    data: ['Item 1', 'Item 2', 'Item 3'],
+  });
 });
 
 app.use((_req: Request, res: Response) => {
