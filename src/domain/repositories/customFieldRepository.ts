@@ -1,6 +1,6 @@
-import { CustomField } from "../types/customFields";
+import { CustomField, FieldCategory } from "../types/customFields";
 
 export interface CustomFieldRepository {
-    saveFields(tenantId: string, fields: CustomField[]): Promise<void>;
-    getFields(tenantId: string): Promise<CustomField[]>;
+    saveFields(tenantId: string, fields: CustomField[], category: FieldCategory): Promise<void>;
+    getFields(tenantId: string, category: FieldCategory): Promise<CustomField[]>;
 }

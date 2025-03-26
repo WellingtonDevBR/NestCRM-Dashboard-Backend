@@ -1,9 +1,10 @@
-export type CustomFieldType = 'text' | 'number' | 'date' | 'select';
+export type FieldCategory = 'Customer' | 'Order' | 'Payment' | 'Interaction';
 
-export interface CustomField {
+export type CustomField = {
     key: string;
     label: string;
-    type: CustomFieldType;
+    type: 'text' | 'number' | 'date' | 'boolean' | 'select';
     required: boolean;
     options?: string[];
-}
+    category: FieldCategory; // 👈 NEW
+};

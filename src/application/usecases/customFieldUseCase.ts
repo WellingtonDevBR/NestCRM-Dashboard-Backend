@@ -1,14 +1,15 @@
 import { CustomFieldRepository } from "../../domain/repositories/customFieldRepository";
-import { CustomField } from "../../domain/types/customFields";
+import { CustomField, FieldCategory } from "../../domain/types/customFields";
 
 export class CustomFieldUseCase {
     constructor(private repository: CustomFieldRepository) { }
 
-    async saveFields(tenantId: string, fields: CustomField[]): Promise<void> {
-        await this.repository.saveFields(tenantId, fields);
+    async saveFields(tenantId: string, fields: CustomField[], category: FieldCategory): Promise<void> {
+        await this.repository.saveFields(tenantId, fields, category);
     }
 
-    async getFields(tenantId: string): Promise<CustomField[]> {
-        return await this.repository.getFields(tenantId);
+    async getFields(tenantId: string, category: FieldCategory): Promise<CustomField[]> {
+        return await this.repository.getFields(tenantId, category);
     }
+
 }
