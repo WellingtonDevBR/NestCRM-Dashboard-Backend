@@ -40,9 +40,8 @@ app.use(cookieParser());
 app.use(express.json());
 
 // 👇 Public routes (no subdomain check)
-app.get('/api/status', (_req: Request, res: Response) => {
-  res.send('✅ EC2 instance is running and healthy!');
-});
+
+
 app.post('/api/logout', (req: Request, res: Response) => {
   res.setHeader("Set-Cookie", [
     `token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; Secure; SameSite=None`,
@@ -54,12 +53,8 @@ app.post('/api/logout', (req: Request, res: Response) => {
 app.use('/', verifySubdomain);
 app.use("/api/settings/custom-fields", verifyToken, customFieldRoutes);
 app.use("/api/customer", verifyToken, customerRoutes);
-app.get('/api/data', verifyToken, (req: Request, res: Response) => {
-  res.json({
-    tenant: req.hostname,
-    user: req.user,
-    data: ['Item 1', 'Item 2', 'Item 3'],
-  });
+app.get('/api/status', verifyToken, (_req: Request, res: Response) => {
+  res.send('✅ EC2 instance is running and healthy!');
 });
 
 app.use((_req: Request, res: Response) => {
