@@ -54,7 +54,7 @@ app.use('/', verifySubdomain);
 app.use("/api/settings/custom-fields", verifyToken, customFieldRoutes);
 app.use("/api/customer", verifyToken, customerRoutes);
 app.get('/api/status', verifyToken, (_req: Request, res: Response) => {
-  res.send('✅ EC2 instance is running and healthy!');
+  res.status(200).json({ message: 'API is up and running' });
 });
 
 app.use((_req: Request, res: Response) => {
