@@ -21,14 +21,22 @@ export class CustomFieldController {
 
     static async getFields(req: Request, res: Response): Promise<any> {
         const tenantId = req.tenant?.Subdomain;
-        const category = req.query.category as string;
+        const category = req.query.category as string | undefined;
 
-        if (!tenantId || !category) {
-            return res.status(400).json({ error: "Missing tenant or category" });
+        if (!tenantId) {
+            return res.status(400).json({ error: "Missing tenant" });
         }
 
+        if (!category) {
+            // Return all grouped
+            const allFields = await useCase.getAllFieldsGroupedByCategory(tenantId);
+            return res.status(200).json(allFields);
+        }
+
+        // Return specific category
         const fields = await useCase.getFields(tenantId, category as any);
         res.status(200).json(fields);
     }
+
 
 }

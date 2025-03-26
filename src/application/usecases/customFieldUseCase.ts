@@ -12,4 +12,8 @@ export class CustomFieldUseCase {
         return await this.repository.getFields(tenantId, category);
     }
 
+    async getAllFieldsGroupedByCategory(tenantId: string): Promise<Record<string, CustomField[]>> {
+        return await this.repository.getAllFieldsGroupedByCategory(tenantId);
+    }
+
 }
