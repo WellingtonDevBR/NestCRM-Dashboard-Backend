@@ -32,7 +32,7 @@ export class DynamoCustomFieldRepository implements CustomFieldRepository {
         return result.Item?.Fields || [];
     }
 
-    async getAllFieldsGroupedByCategory(tenantId: string): Promise<Record<string, CustomField[]>> {
+    async getAllFieldsGroupedByCategory(tenantId: string): Promise<Record<FieldCategory, CustomField[]>> {
         const client = await initDynamoDB();
         const tableName = `NestCRM-${tenantId}-CustomFields`;
 
@@ -44,10 +44,18 @@ export class DynamoCustomFieldRepository implements CustomFieldRepository {
             }
         }));
 
-        const groupedFields: Record<string, CustomField[]> = {};
+        const groupedFields: Record<FieldCategory, CustomField[]> = {
+            Customer: [],
+            Order: [],
+            Payment: [],
+            Interaction: [],
+        };
+
         for (const item of result.Items || []) {
-            const category = item.Category || "unknown";
-            groupedFields[category] = item.Fields || [];
+            const category = item.Category as FieldCategory;
+            if (category in groupedFields) {
+                groupedFields[category] = item.Fields || [];
+            }
         }
 
         return groupedFields;

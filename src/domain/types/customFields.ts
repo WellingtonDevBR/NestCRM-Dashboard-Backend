@@ -3,8 +3,13 @@ export type FieldCategory = 'Customer' | 'Order' | 'Payment' | 'Interaction';
 export type CustomField = {
     key: string;
     label: string;
-    type: 'text' | 'number' | 'date' | 'boolean' | 'select';
+    type: 'text' | 'select' | 'date' | 'number' | 'boolean';
     required: boolean;
     options?: string[];
-    category: FieldCategory; // 👈 NEW
+    uiConfig?: {
+        type?: string;
+        tooltip?: string;
+        colorMap?: Record<string, string>;
+        [key: string]: any;
+    };
 };
