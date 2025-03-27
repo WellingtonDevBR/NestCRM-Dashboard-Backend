@@ -51,7 +51,7 @@ app.post('/api/logout', (req: Request, res: Response) => {
 
 // 👇 All tenant-protected routes
 app.use('/', verifySubdomain);
-app.use("/api/settings/custom-fields", verifyToken, customFieldRoutes);
+app.use("/api/settings", verifyToken, customFieldRoutes);
 app.use("/api/customer", verifyToken, customerRoutes);
 app.get('/api/status', verifyToken, (_req: Request, res: Response) => {
   res.status(200).json({ message: '🟢 API is working fine!' });
