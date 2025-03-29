@@ -106,4 +106,33 @@ export class DynamoCustomFieldRepository implements CustomFieldRepository {
             category: m.category || m.M?.category?.S
         }));
     }
+
+    async getPredictionMappings(tenantId: string): Promise<{ modelField: string; tenantField: string; category: string }[]> {
+        const client = await initDynamoDB();
+        const tableName = `NestCRM-${tenantId}-CustomFields`;
+        const result = await client.send(new GetCommand({
+            TableName: tableName,
+            Key: { PK: "PredictionMapping" }
+        }));
+
+        return result.Item?.Mappings || [];
+    }
+
+    async getCustomerData(
+        tenantId: string,
+        mapping: { modelField: string; tenantField: string; category: string }[]
+    ): Promise<Record<string, any>[]> {
+        const client = await initDynamoDB();
+        const groupedByTable: Record<string, Set<string>> = {};
+
+        for (const { tenantField, category } of mapping) {
+            if (!groupedByTable[category]) groupedByTable[category] = new Set();
+            groupedByTable[category].add(tenantField);
+        }
+
+        const customerTable = `NestCRM-${tenantId}-Customer`;
+        const result = await client.send(new ScanCommand({ TableName: customerTable }));
+        return result.Items || [];
+    }
+
 }

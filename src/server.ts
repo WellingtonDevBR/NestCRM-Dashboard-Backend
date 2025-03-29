@@ -9,6 +9,11 @@ import { verifySubdomain } from "./interfaces/middleware/verifySubdomain";
 import { verifyToken } from "./interfaces/middleware/verifyToken";
 import { customFieldRoutes } from "./interfaces/routes/customFieldRoutes";
 import { customerRoutes } from "./interfaces/routes/customerRoutes";
+import { aiRoutes } from "./interfaces/routes/aiRoutes";
+import { orderRoutes } from "./interfaces/routes/orderRoutes";
+import { paymentRoutes } from "./interfaces/routes/paymentRoutes";
+import { supportRoutes } from "./interfaces/routes/supportRoutes";
+import { interactionRoutes } from "./interfaces/routes/interactionRoutes";
 dotenv.config();
 
 declare global {
@@ -53,6 +58,11 @@ app.post('/api/logout', (req: Request, res: Response) => {
 app.use('/', verifySubdomain);
 app.use("/api/settings", verifyToken, customFieldRoutes);
 app.use("/api/customer", verifyToken, customerRoutes);
+app.use("/api/ai", verifyToken, aiRoutes);
+app.use("/api/order", verifyToken, orderRoutes);
+app.use("/api/payment", verifyToken, paymentRoutes);
+app.use("/api/support", verifyToken, supportRoutes);
+app.use("/api/interaction", verifyToken, interactionRoutes);
 app.get('/api/status', verifyToken, (_req: Request, res: Response) => {
   res.status(200).json({ message: '🟢 API is working fine!' });
 });

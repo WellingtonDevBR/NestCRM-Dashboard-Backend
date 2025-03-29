@@ -23,5 +23,9 @@ export interface CustomFieldRepository {
         tenantField: string;
         category: string;
     }[]>;
-
+    getCustomerData(
+        tenantId: string,
+        mapping: { modelField: string; tenantField: string; category: string }[]
+    ): Promise<Record<string, any>[]>
+    getPredictionMappings(tenantId: string): Promise<{ modelField: string; tenantField: string; category: string }[]>
 }
