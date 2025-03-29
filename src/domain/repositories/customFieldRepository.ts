@@ -9,7 +9,10 @@ export interface CustomFieldRepository {
 
     getFields(tenantId: string, category: FieldCategory): Promise<CustomField[]>;
     getAllFieldsGroupedByCategory(tenantId: string): Promise<Record<string, CustomField[]>>;
-    savePredictionMapping(tenantId: string, mapping: Record<string, string>): Promise<void>;
+    savePredictionMapping(
+        tenantId: string,
+        mappings: { modelField: string; tenantField: string }[]
+    ): Promise<void>;
     getMappedFields(tenantId: string): Promise<Record<string, string>>;
     getCustomerData(tenantId: string): Promise<Record<string, any>[]>;
 }

@@ -32,14 +32,16 @@ export class CustomFieldUseCase {
 
     async savePredictionMapping(
         tenantId: string,
-        mapping: Record<string, string>
+        fieldMapping: Record<string, string>
     ): Promise<void> {
-        if (!mapping || typeof mapping !== 'object') {
-            throw new Error("Invalid prediction mapping object");
-        }
+        const mappings = Object.entries(fieldMapping).map(([modelField, tenantField]) => ({
+            modelField,
+            tenantField
+        }));
 
-        await this.repository.savePredictionMapping(tenantId, mapping);
+        await this.repository.savePredictionMapping(tenantId, mappings);
     }
+
 
 
     async getAllFieldsGroupedByCategory(tenantId: string): Promise<Record<string, CustomField[]>> {

@@ -68,26 +68,21 @@ export class DynamoCustomFieldRepository implements CustomFieldRepository {
 
     async savePredictionMapping(
         tenantId: string,
-        mapping: Record<string, string>
+        mappings: { modelField: string; tenantField: string }[]
     ): Promise<void> {
         const client = await initDynamoDB();
         const tableName = `NestCRM-${tenantId}-CustomFields`;
 
-        // Transform mapping into a list of modelField <-> tenantField pairs
-        const Mappings = Object.entries(mapping).map(([modelField, tenantField]) => ({
-            modelField,
-            tenantField,
-        }));
-
-        await client.send(new PutCommand({
-            TableName: tableName,
-            Item: {
-                PK: "PredictionMapping",
-                Mappings
-            },
-        }));
+        await client.send(
+            new PutCommand({
+                TableName: tableName,
+                Item: {
+                    PK: "PredictionMapping",
+                    Mappings: mappings
+                }
+            })
+        );
     }
-
 
     async getMappedFields(tenantId: string): Promise<Record<string, string>> {
         const client = await initDynamoDB();
