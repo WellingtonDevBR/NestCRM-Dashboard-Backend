@@ -1,10 +1,6 @@
-
+import { Associations } from "./associations";
 
 export interface Customer {
-    CustomerID: string;
-    Name: string;
-    Email?: string;
-    Phone?: string;
-    CreatedAt: string;
-    CustomFields?: Record<string, any>; // Dynamic per tenant
+    customFields: Record<string, any>;
+    associations: Associations;
 }

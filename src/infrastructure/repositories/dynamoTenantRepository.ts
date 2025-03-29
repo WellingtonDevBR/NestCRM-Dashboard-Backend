@@ -1,4 +1,4 @@
-import { initDynamoDB } from './dynamoDBClient';
+import { initDynamoDB } from '../database/dynamoDBClient';
 import { QueryCommand } from "@aws-sdk/lib-dynamodb";
 
 export async function getTenantBySubdomain(subdomain: string) {

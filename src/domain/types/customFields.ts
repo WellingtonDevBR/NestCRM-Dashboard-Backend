@@ -1,4 +1,4 @@
-export type FieldCategory = 'Customer' | 'Order' | 'Payment' | 'Interaction';
+export type FieldCategory = 'Customer' | 'Order' | 'Payment' | 'Interaction' | 'Support';
 
 export type CustomField = {
     key: string;

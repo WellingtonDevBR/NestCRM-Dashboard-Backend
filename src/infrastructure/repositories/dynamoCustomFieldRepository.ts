@@ -2,9 +2,15 @@ import { CustomFieldRepository } from "../../domain/repositories/customFieldRepo
 import { PutCommand, GetCommand, ScanCommand } from "@aws-sdk/lib-dynamodb";
 import { initDynamoDB } from "../database/dynamoDBClient";
 import { CustomField, FieldCategory } from "../../domain/types/customFields";
+import { Associations } from "../../domain/types/associations";
 
 export class DynamoCustomFieldRepository implements CustomFieldRepository {
-    async saveFields(tenantId: string, fields: CustomField[], category: FieldCategory): Promise<void> {
+    async saveFields(
+        tenantId: string,
+        fields: CustomField[],
+        category: FieldCategory,
+        associations?: Associations
+    ): Promise<void> {
         const client = await initDynamoDB();
         const tableName = `NestCRM-${tenantId}-CustomFields`;
         const pk = `CustomFieldSet#${category}`;
@@ -15,6 +21,7 @@ export class DynamoCustomFieldRepository implements CustomFieldRepository {
                 PK: pk,
                 Category: category,
                 Fields: fields,
+                Associations: associations || {},
             },
         }));
     }
@@ -59,5 +66,46 @@ export class DynamoCustomFieldRepository implements CustomFieldRepository {
         }
 
         return groupedFields;
+    }
+
+    async getMappedFields(tenantId: string): Promise<Record<string, string>> {
+        const client = await initDynamoDB();
+        const tableName = `NestCRM-${tenantId}-CustomFields`;
+        const result = await client.send(new GetCommand({
+            TableName: tableName,
+            Key: { PK: "PredictionMapping" }
+        }));
+
+        const mappings = result.Item?.Mappings || [];
+        const mapObj: Record<string, string> = {};
+        for (const m of mappings) {
+            const modelField = m.modelField || m.M?.modelField?.S;
+            const tenantField = m.tenantField || m.M?.tenantField?.S;
+            if (modelField && tenantField) {
+                mapObj[modelField] = tenantField;
+            }
+        }
+        return mapObj;
+    }
+
+    async getCustomerData(tenantId: string): Promise<Record<string, any>[]> {
+        // Replace this mock with actual queries using associations
+        const mockData = [
+            {
+                customer_id: "cust-001",
+                Age: 28,
+                Gender: 1,
+                Partner: "Single",
+                Tenure: 12,
+                Usage_Frequency: 15,
+                Total_Spend: 500.0,
+                Support_Calls: 2,
+                Payment_Delay: 3,
+                Subscription_Type: "Standard",
+                Contract_Length: "Monthly",
+                Days_Since_Last_Interaction: 10
+            }
+        ];
+        return mockData;
     }
 }

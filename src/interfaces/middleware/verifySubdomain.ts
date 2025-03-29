@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from "express";
-import { getTenantBySubdomain } from "../../infrastructure/database/getTenantBySubdomain";
+import { Response, NextFunction } from "express";
+import { getTenantBySubdomain } from "../../infrastructure/repositories/dynamoTenantRepository";
 
 export async function verifySubdomain(req: any, res: Response, next: NextFunction): Promise<any> {
     try {

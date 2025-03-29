@@ -1,42 +1,51 @@
 import { Request, Response } from "express";
 import { DynamoCustomFieldRepository } from "../../infrastructure/repositories/dynamoCustomFieldRepository";
 import { CustomFieldUseCase } from "../../application/usecases/customFieldUseCase";
+import { FieldCategory } from "../../domain/types/customFields";
 
 const repository = new DynamoCustomFieldRepository();
 const useCase = new CustomFieldUseCase(repository);
 
 export class CustomFieldController {
     static async saveFields(req: Request, res: Response): Promise<any> {
-        const tenantId = req.tenant?.Subdomain;
-        const fields = req.body.fields;
-        const category = req.body.category;
+        const subdomain = req.tenant?.Subdomain;
+        if (!subdomain) return res.status(400).json({ error: "Missing subdomain" });
 
-        if (!tenantId || !Array.isArray(fields) || !category) {
-            return res.status(400).json({ error: "Missing tenant, category or invalid fields array" });
+        try {
+            await useCase.saveFields(subdomain, req.body);
+            res.status(200).json({ message: "Fields saved successfully" });
+        } catch (error: any) {
+            res.status(400).json({ error: error.message });
         }
-
-        await useCase.saveFields(tenantId, fields, category);
-        res.status(200).json({ message: "Fields saved successfully" });
     }
 
     static async getFields(req: Request, res: Response): Promise<any> {
-        const tenantId = req.tenant?.Subdomain;
-        const category = req.query.category as string | undefined;
+        const subdomain = req.tenant?.Subdomain;
+        if (!subdomain) return res.status(400).json({ error: "Missing subdomain" });
 
-        if (!tenantId) {
-            return res.status(400).json({ error: "Missing tenant" });
+        try {
+            const category = req.query.category as FieldCategory | undefined;
+            if (!category) {
+                const grouped = await useCase.getAllFieldsGroupedByCategory(subdomain);
+                return res.status(200).json(grouped);
+            }
+
+            const fields = await useCase.getFields(subdomain, category);
+            res.status(200).json(fields);
+        } catch (error: any) {
+            res.status(500).json({ error: error.message });
         }
-
-        if (!category) {
-            // Return all grouped
-            const allFields = await useCase.getAllFieldsGroupedByCategory(tenantId);
-            return res.status(200).json(allFields);
-        }
-
-        // Return specific category
-        const fields = await useCase.getFields(tenantId, category as any);
-        res.status(200).json(fields);
     }
 
+    static async getPredictionPayload(req: Request, res: Response): Promise<any> {
+        const subdomain = req.tenant?.Subdomain;
+        if (!subdomain) return res.status(400).json({ error: "Missing subdomain" });
 
+        try {
+            const payload = await useCase.generatePayload(subdomain);
+            res.status(200).json(payload);
+        } catch (error: any) {
+            res.status(500).json({ error: error.message });
+        }
+    }
 }
