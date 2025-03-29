@@ -1,4 +1,4 @@
 export type Associations = {
-    customer_id?: string;
+    id?: string;
     email?: string | null;
 };

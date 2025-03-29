@@ -45,8 +45,6 @@ app.use(cookieParser());
 app.use(express.json());
 
 // 👇 Public routes (no subdomain check)
-
-
 app.post('/api/logout', (req: Request, res: Response) => {
   res.setHeader("Set-Cookie", [
     `token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; Secure; SameSite=None`,
@@ -57,8 +55,8 @@ app.post('/api/logout', (req: Request, res: Response) => {
 // 👇 All tenant-protected routes
 app.use('/', verifySubdomain);
 app.use("/api/settings", verifyToken, customFieldRoutes);
-app.use("/api/customer", verifyToken, customerRoutes);
 app.use("/api/ai", verifyToken, aiRoutes);
+app.use("/api/customer", verifyToken, customerRoutes);
 app.use("/api/order", verifyToken, orderRoutes);
 app.use("/api/payment", verifyToken, paymentRoutes);
 app.use("/api/support", verifyToken, supportRoutes);
