@@ -1,12 +1,10 @@
 import { CustomField, FieldCategory } from "../types/customFields";
-import { Associations } from "../types/associations";
 
 export interface CustomFieldRepository {
     saveFields(
         tenantId: string,
         fields: CustomField[],
         category: FieldCategory,
-        associations?: Associations
     ): Promise<void>;
 
     getFields(tenantId: string, category: FieldCategory): Promise<CustomField[]>;

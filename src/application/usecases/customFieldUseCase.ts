@@ -10,11 +10,10 @@ export class CustomFieldUseCase {
         tenantId: string,
         payload: {
             fields: CustomField[],
-            category: FieldCategory,
-            associations: Associations
+            category: FieldCategory
         }
     ): Promise<void> {
-        const { fields, category, associations } = payload;
+        const { fields, category } = payload;
 
         if (!fields || !Array.isArray(fields)) {
             throw new Error("Invalid or missing fields array");
@@ -24,11 +23,7 @@ export class CustomFieldUseCase {
             throw new Error("Category is required");
         }
 
-        if (!associations?.customer_id && !associations?.email) {
-            throw new Error("Association with customer_id or email is required");
-        }
-
-        await this.repository.saveFields(tenantId, fields, category, associations);
+        await this.repository.saveFields(tenantId, fields, category);
     }
 
     async getFields(tenantId: string, category: FieldCategory): Promise<CustomField[]> {

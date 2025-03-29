@@ -2,14 +2,12 @@ import { CustomFieldRepository } from "../../domain/repositories/customFieldRepo
 import { PutCommand, GetCommand, ScanCommand } from "@aws-sdk/lib-dynamodb";
 import { initDynamoDB } from "../database/dynamoDBClient";
 import { CustomField, FieldCategory } from "../../domain/types/customFields";
-import { Associations } from "../../domain/types/associations";
 
 export class DynamoCustomFieldRepository implements CustomFieldRepository {
     async saveFields(
         tenantId: string,
         fields: CustomField[],
         category: FieldCategory,
-        associations?: Associations
     ): Promise<void> {
         const client = await initDynamoDB();
         const tableName = `NestCRM-${tenantId}-CustomFields`;
@@ -20,8 +18,7 @@ export class DynamoCustomFieldRepository implements CustomFieldRepository {
             Item: {
                 PK: pk,
                 Category: category,
-                Fields: fields,
-                Associations: associations || {},
+                Fields: fields
             },
         }));
     }
@@ -56,6 +53,7 @@ export class DynamoCustomFieldRepository implements CustomFieldRepository {
             Order: [],
             Payment: [],
             Interaction: [],
+            Support: [],
         };
 
         for (const item of result.Items || []) {
