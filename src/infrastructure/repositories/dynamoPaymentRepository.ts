@@ -10,12 +10,12 @@ export class DynamoPaymentRepository implements PaymentRepository {
 
     async savePayment(subdomain: string, payment: Payment): Promise<void> {
         const client = await initDynamoDB();
-        const customerId = payment.associations.customer_id || payment.associations.email;
+        const customerId = payment.associations.id || payment.associations.email;
         await client.send(
             new PutCommand({
                 TableName: this.getTableName(subdomain),
                 Item: {
-                    PaymentID: customerId,
+                    id: customerId,
                     ...payment,
                 },
             })
