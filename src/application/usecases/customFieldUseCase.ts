@@ -30,45 +30,26 @@ export class CustomFieldUseCase {
         return await this.repository.getFields(tenantId, category);
     }
 
-    async savePredictionMapping(
+    async savePredictionFieldMappings(
         tenantId: string,
-        fieldMapping: Record<string, string>
+        mappings: {
+            modelField: string;
+            tenantField: string;
+            category: string;
+        }[]
     ): Promise<void> {
-        const mappings = Object.entries(fieldMapping).map(([modelField, tenantField]) => ({
-            modelField,
-            tenantField
-        }));
-
-        await this.repository.savePredictionMapping(tenantId, mappings);
+        await this.repository.savePredictionFieldMappings(tenantId, mappings);
     }
-
-
 
     async getAllFieldsGroupedByCategory(tenantId: string): Promise<Record<string, CustomField[]>> {
         return await this.repository.getAllFieldsGroupedByCategory(tenantId);
     }
 
-    async generatePayload(tenantId: string): Promise<PredictionPayload> {
-        const fieldMapping = await this.repository.getMappedFields(tenantId);
-        const rawData = await this.repository.getCustomerData(tenantId);
-
-        const reverseMap = Object.entries(fieldMapping).reduce((acc, [modelField, tenantField]) => {
-            acc[tenantField] = modelField;
-            return acc;
-        }, {} as Record<string, string>);
-
-        const transformedData = rawData.map(record => {
-            const transformed: Record<string, any> = {};
-            Object.keys(record).forEach(key => {
-                const mappedKey = reverseMap[key] || key;
-                transformed[mappedKey] = record[key];
-            });
-            return transformed;
-        });
-
-        return {
-            field_mapping: fieldMapping,
-            data: transformedData
-        };
+    async getPredictionFieldMappings(tenantId: string): Promise<{
+        modelField: string;
+        tenantField: string;
+        category: string;
+    }[]> {
+        return await this.repository.getPredictionFieldMappings(tenantId);
     }
 }

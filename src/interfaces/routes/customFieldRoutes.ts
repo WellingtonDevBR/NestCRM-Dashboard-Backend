@@ -9,4 +9,4 @@ customFieldRoutes.get("/custom-fields", CustomFieldController.getFields);
 
 // Add the following line to map the prediction payload route
 customFieldRoutes.post("/prediction-mapping", CustomFieldController.savePredictionPayload);
-customFieldRoutes.get("/prediction-mapping", CustomFieldController.getPredictionPayload);
+customFieldRoutes.get("/prediction-mapping", CustomFieldController.getPredictionFieldMappings);

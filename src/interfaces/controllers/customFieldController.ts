@@ -39,34 +39,32 @@ export class CustomFieldController {
 
     static async savePredictionPayload(req: Request, res: Response): Promise<any> {
         const tenantId = req.tenant?.Subdomain;
-        if (!tenantId) {
-            return res.status(400).json({ error: "Missing tenant" });
-        }
+        if (!tenantId) return res.status(400).json({ error: "Missing tenant" });
 
-        const { field_mapping } = req.body;
-        if (!field_mapping || typeof field_mapping !== "object") {
-            return res.status(400).json({ error: "Invalid field_mapping format" });
+        const mappings = req.body;
+
+        if (!Array.isArray(mappings) || mappings.some(m => !m.modelField || !m.tenantField || !m.category)) {
+            return res.status(400).json({ error: "Invalid mapping format" });
         }
 
         try {
-            await useCase.savePredictionMapping(tenantId, field_mapping);
-            res.status(200).json({ message: "Prediction mapping saved successfully" });
-        } catch (error: any) {
-            res.status(500).json({ error: error.message });
+            await useCase.savePredictionFieldMappings(tenantId, mappings);
+            res.status(200).json({ message: "Prediction field mappings saved successfully" });
+        } catch (err: any) {
+            res.status(500).json({ error: err.message });
         }
     }
 
-
-
-    static async getPredictionPayload(req: Request, res: Response): Promise<any> {
+    static async getPredictionFieldMappings(req: Request, res: Response): Promise<any> {
         const subdomain = req.tenant?.Subdomain;
         if (!subdomain) return res.status(400).json({ error: "Missing subdomain" });
 
         try {
-            const payload = await useCase.generatePayload(subdomain);
-            res.status(200).json(payload);
-        } catch (error: any) {
-            res.status(500).json({ error: error.message });
+            const mappings = await useCase.getPredictionFieldMappings(subdomain);
+            res.status(200).json({ mappings });
+        } catch (err: any) {
+            res.status(500).json({ error: err.message });
         }
     }
+
 }

@@ -66,62 +66,44 @@ export class DynamoCustomFieldRepository implements CustomFieldRepository {
         return groupedFields;
     }
 
-    async savePredictionMapping(
+    async savePredictionFieldMappings(
         tenantId: string,
-        mappings: { modelField: string; tenantField: string }[]
+        mappings: {
+            modelField: string;
+            tenantField: string;
+            category: string;
+        }[]
     ): Promise<void> {
         const client = await initDynamoDB();
         const tableName = `NestCRM-${tenantId}-CustomFields`;
 
-        await client.send(
-            new PutCommand({
-                TableName: tableName,
-                Item: {
-                    PK: "PredictionMapping",
-                    Mappings: mappings
-                }
-            })
-        );
+        await client.send(new PutCommand({
+            TableName: tableName,
+            Item: {
+                PK: "PredictionMapping",
+                Mappings: mappings
+            }
+        }));
     }
 
-    async getMappedFields(tenantId: string): Promise<Record<string, string>> {
+    async getPredictionFieldMappings(tenantId: string): Promise<{
+        modelField: string;
+        tenantField: string;
+        category: string;
+    }[]> {
         const client = await initDynamoDB();
         const tableName = `NestCRM-${tenantId}-CustomFields`;
+
         const result = await client.send(new GetCommand({
             TableName: tableName,
             Key: { PK: "PredictionMapping" }
         }));
 
-        const mappings = result.Item?.Mappings || [];
-        const mapObj: Record<string, string> = {};
-        for (const m of mappings) {
-            const modelField = m.modelField || m.M?.modelField?.S;
-            const tenantField = m.tenantField || m.M?.tenantField?.S;
-            if (modelField && tenantField) {
-                mapObj[modelField] = tenantField;
-            }
-        }
-        return mapObj;
-    }
-
-    async getCustomerData(tenantId: string): Promise<Record<string, any>[]> {
-        // Replace this mock with actual queries using associations
-        const mockData = [
-            {
-                customer_id: "cust-001",
-                Age: 28,
-                Gender: 1,
-                Partner: "Single",
-                Tenure: 12,
-                Usage_Frequency: 15,
-                Total_Spend: 500.0,
-                Support_Calls: 2,
-                Payment_Delay: 3,
-                Subscription_Type: "Standard",
-                Contract_Length: "Monthly",
-                Days_Since_Last_Interaction: 10
-            }
-        ];
-        return mockData;
+        const rawMappings = result.Item?.Mappings || [];
+        return rawMappings.map((m: any) => ({
+            modelField: m.modelField || m.M?.modelField?.S,
+            tenantField: m.tenantField || m.M?.tenantField?.S,
+            category: m.category || m.M?.category?.S
+        }));
     }
 }
