@@ -37,6 +37,25 @@ export class CustomFieldController {
         }
     }
 
+    static async savePredictionPayload(req: Request, res: Response): Promise<any> {
+        const subdomain = req.tenant?.Subdomain;
+        if (!subdomain) return res.status(400).json({ error: "Missing subdomain" });
+
+        try {
+            const mappings = req.body?.field_mapping;
+
+            if (!mappings || typeof mappings !== 'object') {
+                return res.status(400).json({ error: "Invalid or missing field_mapping object" });
+            }
+
+            await useCase.savePredictionMapping(subdomain, mappings);
+            res.status(200).json({ message: "Prediction mapping saved successfully" });
+        } catch (error: any) {
+            res.status(400).json({ error: error.message });
+        }
+    }
+
+
     static async getPredictionPayload(req: Request, res: Response): Promise<any> {
         const subdomain = req.tenant?.Subdomain;
         if (!subdomain) return res.status(400).json({ error: "Missing subdomain" });
