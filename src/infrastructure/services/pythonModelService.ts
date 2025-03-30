@@ -4,10 +4,14 @@ import { ModelService } from "../../domain/services/aiServices";
 
 export class PythonModelService implements ModelService {
     async predictChurn(payload: {
-        field_mapping: Record<string, string>,
-        data: Record<string, any>[]
+        data: Record<string, any>[];
     }): Promise<any> {
-        const response = await axios.post(`${process.env.PYTHON_MODEL_URL}/predict`, payload);
-        return response.data;
+        try {
+            const response = await axios.post(`${process.env.PYTHON_MODEL_URL}/predict`, payload);
+            return response.data;
+        } catch (error) {
+            console.error("❌ Error in PythonModelService:", error);
+            throw new Error("Failed to call Python model service");
+        }
     }
 }

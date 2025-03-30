@@ -1,6 +1,7 @@
+export interface PredictPayload {
+    data: Record<string, any>[];
+}
+
 export interface ModelService {
-    predictChurn(payload: {
-        field_mapping: Record<string, string>,
-        data: Record<string, any>[]
-    }): Promise<any>;
+    predictChurn(payload: PredictPayload): Promise<any>;
 }
