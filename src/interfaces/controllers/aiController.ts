@@ -37,4 +37,16 @@ export class AIController {
             res.status(500).json({ error: err.message });
         }
     }
+
+    static async getChurnRateByPeriod(req: Request, res: Response) {
+        try {
+            const subdomain = req.tenant?.Subdomain!;
+            const period = req.query.period as "daily" | "monthly" | "yearly" | "quarterly" || "monthly";
+            const results = await useCase.getChurnRateByPeriod(subdomain, period);
+            res.json(results);
+        } catch (error: any) {
+            console.error("❌ Error getting churn rate:", error);
+            res.status(500).json({ error: error.message || "Failed to get churn rate" });
+        }
+    }
 }
