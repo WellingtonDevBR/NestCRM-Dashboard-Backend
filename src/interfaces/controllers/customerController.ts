@@ -25,4 +25,20 @@ export class CustomerController {
         const customers = await useCase.getCustomers(subdomain);
         res.status(200).json(customers);
     }
+
+    static async getCustomerByIdOrEmail(req: Request, res: Response): Promise<any> {
+        const subdomain = req.tenant?.Subdomain;
+        if (!subdomain) return res.status(400).json({ error: "Missing subdomain" });
+
+        const { id, email } = req.query;
+
+        try {
+            const customer = await useCase.getCustomerByIdOrEmail(subdomain, id as string, email as string);
+            if (!customer) return res.status(404).json({ error: "Customer not found" });
+            res.status(200).json(customer);
+        } catch (err: any) {
+            res.status(400).json({ error: err.message });
+        }
+    }
+
 }

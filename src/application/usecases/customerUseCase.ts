@@ -33,4 +33,12 @@ export class CustomerUseCase {
     async getCustomers(subdomain: string): Promise<Customer[]> {
         return await this.repository.getCustomers(subdomain);
     }
+
+    async getCustomerByIdOrEmail(subdomain: string, id?: string, email?: string): Promise<Customer | null> {
+        if (!id && !email) throw new Error("You must provide either id or email");
+
+        if (id) return await this.repository.findById(subdomain, id);
+        return await this.repository.findByEmail(subdomain, email!);
+    }
+
 }
