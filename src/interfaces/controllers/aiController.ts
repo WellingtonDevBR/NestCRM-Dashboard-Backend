@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { DynamoCustomFieldRepository } from "../../infrastructure/repositories/dynamoCustomFieldRepository";
 import { PythonModelService } from "../../infrastructure/services/pythonModelService";
 import { AIPredictionUseCase } from "../../application/usecases/aiUseCase";
-import { DynamoPredictionRepository } from "../../infrastructure/repositories/DynamoPredictionRepository";
+import { DynamoPredictionRepository } from "../../infrastructure/repositories/dynamoPredictionRepository";
 
 const repository = new DynamoCustomFieldRepository();
 const modelService = new PythonModelService();
