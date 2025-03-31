@@ -8,4 +8,6 @@ export type Prediction = {
         contribution: number;
     }[];
     created_at: string;
+    latest_prediction_at: string;
+    is_latest?: boolean;
 };

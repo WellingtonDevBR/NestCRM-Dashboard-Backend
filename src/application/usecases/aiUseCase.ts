@@ -1,6 +1,7 @@
 import { CustomFieldRepository } from "../../domain/repositories/customFieldRepository";
 import { PredictionRepository } from "../../domain/repositories/predictionRepository";
 import { ModelService } from "../../domain/services/aiServices";
+import { Prediction } from "../../domain/types/prediction";
 
 export class AIPredictionUseCase {
     constructor(
@@ -20,12 +21,9 @@ export class AIPredictionUseCase {
 
         const fullBatch: any[] = [];
         const lightBatch: any[] = [];
-        const customerMap = new Map<string, any>(); // track originals
 
         for (const entry of rawData) {
             const encoded = normalizeCustomer(entry, mappings);
-            customerMap.set(encoded.CustomerID, entry);
-
             if (hasAllFields(encoded, FULL_FEATURES)) {
                 fullBatch.push(encoded);
             } else if (hasAllFields(encoded, LIGHT_FEATURES)) {
@@ -36,20 +34,54 @@ export class AIPredictionUseCase {
         const results: any[] = [];
 
         if (fullBatch.length > 0) {
-            console.log(`🚀 Sending ${fullBatch.length} to FULL model`);
             const predictions = await this.modelService.predictChurn({ data: fullBatch });
-            await this.predictionRepo.savePrediction(tenantId, predictions);
-            results.push(...predictions);
+            const saved = await this.saveOnlyIfChanged(tenantId, predictions);
+            results.push(...saved);
         }
 
         if (lightBatch.length > 0) {
-            console.log(`🚀 Sending ${lightBatch.length} to LIGHT model`);
             const predictions = await this.modelService.predictChurn({ data: lightBatch });
-            await this.predictionRepo.savePrediction(tenantId, predictions);
-            results.push(...predictions);
+            const saved = await this.saveOnlyIfChanged(tenantId, predictions);
+            results.push(...saved);
         }
 
         return results;
+    }
+
+    async getLatestPredictions(tenantId: string): Promise<Prediction[]> {
+        return this.predictionRepo.getPredictions(tenantId);
+    }
+
+    private async saveOnlyIfChanged(tenantId: string, predictions: Prediction[]) {
+        const savedPredictions: Prediction[] = [];
+
+        for (const prediction of predictions) {
+            const latest = await this.predictionRepo.getLatestPrediction(tenantId, prediction.customer_id);
+
+            const isSame = latest &&
+                latest.churn_prediction === prediction.churn_prediction &&
+                Math.abs(latest.churn_probability - prediction.churn_probability) < 0.01;
+
+            if (!isSame) {
+                const now = new Date().toISOString();
+
+                if (latest) {
+                    // Mark previous record as not latest
+                    await this.predictionRepo.updateIsLatestFlag(tenantId, latest.customer_id, latest.latest_prediction_at, false);
+                }
+
+                const predictionToSave: Prediction = {
+                    ...prediction,
+                    latest_prediction_at: now,
+                    is_latest: true,
+                };
+
+                await this.predictionRepo.savePrediction(tenantId, predictionToSave);
+                savedPredictions.push(predictionToSave);
+            }
+        }
+
+        return savedPredictions;
     }
 }
 

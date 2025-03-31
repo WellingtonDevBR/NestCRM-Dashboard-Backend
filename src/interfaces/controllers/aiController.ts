@@ -23,4 +23,18 @@ export class AIController {
             res.status(500).json({ error: err.message });
         }
     }
+
+    static async getPredictions(req: Request, res: Response): Promise<any> {
+        const subdomain = req.tenant?.Subdomain;
+        if (!subdomain) {
+            return res.status(400).json({ error: "Missing subdomain" });
+        }
+
+        try {
+            const result = await useCase.getLatestPredictions(subdomain);
+            res.status(200).json(result);
+        } catch (err: any) {
+            res.status(500).json({ error: err.message });
+        }
+    }
 }
