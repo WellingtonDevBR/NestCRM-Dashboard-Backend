@@ -1,14 +1,18 @@
 import { CustomFieldRepository } from "../../domain/repositories/customFieldRepository";
 import { PredictionRepository } from "../../domain/repositories/predictionRepository";
+import { RiskAlertRepository } from "../../domain/repositories/riskAlertRepository";
 import { ModelService } from "../../domain/services/aiServices";
 import { ChurnRate } from "../../domain/types/churnRate";
 import { Prediction } from "../../domain/types/prediction";
+import crypto from "crypto";
+import { RiskCategory, RiskSeverity } from "../../domain/types/riskAlert";
 
 export class AIPredictionUseCase {
     constructor(
         private fieldRepo: CustomFieldRepository,
         private predictionRepo: PredictionRepository,
-        private modelService: ModelService
+        private modelService: ModelService,
+        private riskAlertRepo: RiskAlertRepository
     ) { }
 
     async predict(tenantId: string): Promise<any> {
@@ -93,9 +97,11 @@ export class AIPredictionUseCase {
     }
 
     private async saveOnlyIfChanged(tenantId: string, predictions: Prediction[]) {
+
         const savedPredictions: Prediction[] = [];
 
         for (const prediction of predictions) {
+            console.log(`[🔎] Checking prediction for ${prediction.customer_id}`);
             const latest = await this.predictionRepo.getLatestPrediction(tenantId, prediction.customer_id);
 
             const isSame = latest &&
@@ -106,8 +112,9 @@ export class AIPredictionUseCase {
                 const now = new Date().toISOString();
 
                 if (latest) {
-                    // Mark previous record as not latest
-                    await this.predictionRepo.updateIsLatestFlag(tenantId, latest.customer_id, latest.latest_prediction_at, false);
+                    await this.predictionRepo.updateIsLatestFlag(
+                        tenantId, latest.customer_id, latest.latest_prediction_at, false
+                    );
                 }
 
                 const predictionToSave: Prediction = {
@@ -118,6 +125,61 @@ export class AIPredictionUseCase {
 
                 await this.predictionRepo.savePrediction(tenantId, predictionToSave);
                 savedPredictions.push(predictionToSave);
+                console.log(`[✅] Saved prediction for ${prediction.customer_id} at ${now}`);
+
+                if (prediction.risk_level === "High Risk") {
+                    await this.riskAlertRepo.saveAlert(tenantId, {
+                        id: prediction.customer_id,
+                        category: "Churn Risk",
+                        severity: "Critical",
+                        message: "This customer is at high risk of churn.",
+                        status: "New",
+                        assigned_to: null,
+                        created_at: now,
+                    });
+                }
+                console.log(`[⚠️] High Risk detected for ${prediction.customer_id}`);
+
+                const riskyFactors = prediction.key_factors.filter(f => {
+                    return (
+                        (f.feature === "Usage_Frequency" && f.contribution < -0.3) ||
+                        (f.feature === "Payment_Delay" && f.contribution > 0.3) ||
+                        (f.feature === "Support_Calls" && f.contribution > 0.3) ||
+                        (f.feature === "Days_Since_Last_Interaction" && f.contribution > 0.3)
+                    );
+                });
+
+                for (const factor of riskyFactors) {
+                    const now = new Date().toISOString();
+                    console.log(`[🚨] Saving alert for ${factor.feature} with score ${factor.contribution}`);
+
+                    const categoryMap: Record<string, RiskCategory> = {
+                        "Usage_Frequency": "Activity Drop",
+                        "Payment_Delay": "Payment Issue",
+                        "Support_Calls": "Support Escalation",
+                        "Days_Since_Last_Interaction": "Activity Drop", // ou "Inactivity Alert" se for outro enum
+                    };
+
+                    const category: RiskCategory = categoryMap[factor.feature] || "Churn Risk";
+
+                    const severity: RiskSeverity =
+                        factor.contribution >= 0.7 ? "Critical" :
+                            factor.contribution >= 0.4 ? "High" :
+                                factor.contribution >= 0.2 ? "Medium" :
+                                    "Low";
+                    console.log(`[🔬] Risky factors for ${prediction.customer_id}:`, riskyFactors);
+
+                    await this.riskAlertRepo.saveAlert(tenantId, {
+                        id: prediction.customer_id,
+                        category,
+                        severity,
+                        message: `Risk detected from ${factor.feature} (impact score: ${factor.contribution.toFixed(2)})`,
+                        status: "New",
+                        assigned_to: null,
+                        created_at: now,
+                    });
+                }
+
             }
         }
 

@@ -3,11 +3,13 @@ import { DynamoCustomFieldRepository } from "../../infrastructure/repositories/d
 import { PythonModelService } from "../../infrastructure/services/pythonModelService";
 import { AIPredictionUseCase } from "../../application/usecases/aiUseCase";
 import { DynamoPredictionRepository } from "../../infrastructure/repositories/dynamoPredictionRepository";
+import { DynamoRiskAlertRepository } from "../../infrastructure/repositories/dynamoRiskAlertRepository";
 
 const repository = new DynamoCustomFieldRepository();
 const modelService = new PythonModelService();
 const predictionRepository = new DynamoPredictionRepository();
-const useCase = new AIPredictionUseCase(repository, predictionRepository, modelService);
+const riskAlertRepository = new DynamoRiskAlertRepository();
+const useCase = new AIPredictionUseCase(repository, predictionRepository, modelService, riskAlertRepository);
 
 export class AIController {
     static async predictChurn(req: Request, res: Response): Promise<any> {

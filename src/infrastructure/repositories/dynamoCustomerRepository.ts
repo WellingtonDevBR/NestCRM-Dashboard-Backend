@@ -49,6 +49,4 @@ export class DynamoCustomerRepository implements CustomerRepository {
         );
         return result.Items?.[0] ?? null;
     }
-
-
 }

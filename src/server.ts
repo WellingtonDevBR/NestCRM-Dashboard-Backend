@@ -14,6 +14,7 @@ import { orderRoutes } from "./interfaces/routes/orderRoutes";
 import { paymentRoutes } from "./interfaces/routes/paymentRoutes";
 import { supportRoutes } from "./interfaces/routes/supportRoutes";
 import { interactionRoutes } from "./interfaces/routes/interactionRoutes";
+import riskAlertRoutes from "./interfaces/routes/riskAlertRoutes";
 dotenv.config();
 
 declare global {
@@ -54,6 +55,7 @@ app.post('/api/logout', (req: Request, res: Response) => {
 
 // 👇 All tenant-protected routes
 app.use('/', verifySubdomain);
+app.use('/api/risk', verifyToken, riskAlertRoutes);
 app.use("/api/settings", verifyToken, customFieldRoutes);
 app.use("/api/ai", verifyToken, aiRoutes);
 app.use("/api/customer", verifyToken, customerRoutes);
