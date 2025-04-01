@@ -6,10 +6,12 @@ export type RiskCategory =
     | "Support Escalation"
     | "Contract Termination"
     | "Billing Dispute"
-    | "Negative Feedback"
+    | "Demographic Risk"
+    | "Behavioral Pattern Risk"
     | "Usage Spike"
     | "Subscription Downgrade"
     | "Feature Request Surge";
+
 
 export type RiskAlertStatus = "New" | "In Progress" | "Resolved";
 

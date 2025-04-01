@@ -9,12 +9,12 @@ import { verifySubdomain } from "./interfaces/middleware/verifySubdomain";
 import { verifyToken } from "./interfaces/middleware/verifyToken";
 import { customFieldRoutes } from "./interfaces/routes/customFieldRoutes";
 import { customerRoutes } from "./interfaces/routes/customerRoutes";
-import { aiRoutes } from "./interfaces/routes/aiRoutes";
 import { orderRoutes } from "./interfaces/routes/orderRoutes";
 import { paymentRoutes } from "./interfaces/routes/paymentRoutes";
 import { supportRoutes } from "./interfaces/routes/supportRoutes";
 import { interactionRoutes } from "./interfaces/routes/interactionRoutes";
 import riskAlertRoutes from "./interfaces/routes/riskAlertRoutes";
+import { AIPredictionRoutes } from "./interfaces/routes/AIPredictionRoutes";
 dotenv.config();
 
 declare global {
@@ -57,7 +57,7 @@ app.post('/api/logout', (req: Request, res: Response) => {
 app.use('/', verifySubdomain);
 app.use('/api/risk', verifyToken, riskAlertRoutes);
 app.use("/api/settings", verifyToken, customFieldRoutes);
-app.use("/api/ai", verifyToken, aiRoutes);
+app.use("/api/ai", verifyToken, AIPredictionRoutes);
 app.use("/api/customer", verifyToken, customerRoutes);
 app.use("/api/order", verifyToken, orderRoutes);
 app.use("/api/payment", verifyToken, paymentRoutes);

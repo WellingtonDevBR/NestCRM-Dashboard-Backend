@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { DynamoCustomFieldRepository } from "../../infrastructure/repositories/dynamoCustomFieldRepository";
 import { PythonModelService } from "../../infrastructure/services/pythonModelService";
-import { AIPredictionUseCase } from "../../application/usecases/aiUseCase";
+import { AIPredictionUseCase } from "../../application/usecases/prediction/AIPredictionUseCase";
 import { DynamoPredictionRepository } from "../../infrastructure/repositories/dynamoPredictionRepository";
 import { DynamoRiskAlertRepository } from "../../infrastructure/repositories/dynamoRiskAlertRepository";
 
