@@ -16,5 +16,6 @@ export function getRiskMessage(feature: string, impact: number): string {
         Dependents: "The number of dependents may influence the cancellation decision"
     };
 
-    return messages[feature] ? `${messages[feature]}${impactText}` : `Risco detectado em ${feature}${impactText}`;
+    return messages[feature] ? `${messages[feature]}${impactText}` : `Risk detected in ${feature}${impactText}`;
+
 }
