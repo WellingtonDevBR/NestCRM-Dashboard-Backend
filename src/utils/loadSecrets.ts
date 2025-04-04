@@ -15,7 +15,7 @@ export async function loadSecrets(): Promise<Record<string, string>> {
     const result = await client.send(new GetSecretValueCommand({ SecretId: secretName }));
 
     if (!result.SecretString) {
-        throw new Error("❌ Secret string is empty.");
+        throw new Error("Secret string is empty.");
     }
 
     const secrets = JSON.parse(result.SecretString);

@@ -25,7 +25,7 @@ export const verifyToken = async (
         req.user = decoded;
         next();
     } catch (err) {
-        console.error('❌ Token validation error', err);
+        console.error('Token validation error', err);
         res.status(403).json({ error: 'Invalid or expired token' });
     }
 };

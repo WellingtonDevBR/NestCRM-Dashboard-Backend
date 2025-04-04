@@ -2,18 +2,18 @@ export function getRiskMessage(feature: string, impact: number): string {
     const impactText = ` (impacto: ${impact.toFixed(2)})`;
 
     const messages: Record<string, string> = {
-        Partner: "O status de relacionamento do cliente indica uma propensão elevada ao cancelamento",
-        Payment_Delay: "Atrasos recorrentes no pagamento indicam risco elevado de churn",
-        Usage_Frequency: "A frequência de uso da plataforma está muito baixa, indicando desengajamento",
-        Support_Calls: "O alto número de chamadas de suporte sugere insatisfação com o serviço",
-        Days_Since_Last_Interaction: "Faz muito tempo desde a última interação com a plataforma",
-        Subscription_Type: "O tipo de assinatura atual está associado a alta rotatividade",
-        Tenure: "Clientes com pouco tempo de casa tendem a cancelar mais",
-        Age: "O perfil de idade do cliente está associado a maior taxa de churn",
-        Gender: "Análises indicam maior churn entre clientes com esse perfil de gênero",
-        Total_Spend: "Gastos reduzidos indicam menor engajamento e maior risco de saída",
-        Contract_Length: "Clientes com contratos curtos tendem a cancelar com mais frequência",
-        Dependents: "O número de dependentes pode influenciar na decisão de cancelamento"
+        Partner: "The customer's relationship status indicates a high propensity to churn",
+        Payment_Delay: "Frequent payment delays indicate a high risk of churn",
+        Usage_Frequency: "The platform usage frequency is very low, indicating disengagement",
+        Support_Calls: "The high number of support calls suggests dissatisfaction with the service",
+        Days_Since_Last_Interaction: "It has been a long time since the last interaction with the platform",
+        Subscription_Type: "The current subscription type is associated with high churn rates",
+        Tenure: "Customers with shorter tenure tend to cancel more often",
+        Age: "The customer's age profile is associated with a higher churn rate",
+        Gender: "Analysis shows higher churn among customers with this gender profile",
+        Total_Spend: "Lower spending indicates less engagement and a higher risk of churn",
+        Contract_Length: "Customers with short-term contracts tend to cancel more frequently",
+        Dependents: "The number of dependents may influence the cancellation decision"
     };
 
     return messages[feature] ? `${messages[feature]}${impactText}` : `Risco detectado em ${feature}${impactText}`;

@@ -10,7 +10,7 @@ export class PythonModelService implements ModelService {
             const response = await axios.post(`${process.env.PYTHON_MODEL_URL}/predict`, payload);
             return response.data;
         } catch (error) {
-            console.error("❌ Error in PythonModelService:", error);
+            console.error("Error in PythonModelService:", error);
             throw new Error("Failed to call Python model service");
         }
     }

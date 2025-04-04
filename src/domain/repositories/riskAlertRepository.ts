@@ -1,4 +1,3 @@
-// domain/repositories/riskAlertRepository.ts
 import { RiskAlert } from "../types/riskAlert";
 
 export interface RiskAlertRepository {

@@ -2,7 +2,7 @@
 declare global {
     namespace Express {
         interface Request {
-            user?: any; // 👈 deixa como 'any' para evitar conflito
+            user?: any;
             tenant?: import("../../domain/types/tenant").Tenant;
         }
     }

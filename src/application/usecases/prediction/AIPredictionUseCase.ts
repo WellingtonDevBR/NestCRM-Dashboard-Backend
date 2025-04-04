@@ -20,10 +20,10 @@ export class AIPredictionUseCase {
     async predict(tenantId: string): Promise<Prediction[]> {
         console.log(tenantId, "tenantId in predict method");
         const mappings = await this.fieldRepo.getPredictionFieldMappings(tenantId);
-        if (!mappings || mappings.length === 0) throw new Error("❌ No field mapping found");
+        if (!mappings || mappings.length === 0) throw new Error("No field mapping found");
 
         const rawData = await this.fieldRepo.getCustomerData(tenantId, mappings);
-        if (!rawData || rawData.length === 0) throw new Error("❌ No data found to predict");
+        if (!rawData || rawData.length === 0) throw new Error("No data found to predict");
 
         const { fullBatch, lightBatch } = normalizeAndSplitData(rawData, mappings);
 
