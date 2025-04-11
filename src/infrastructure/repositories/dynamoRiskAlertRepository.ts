@@ -26,6 +26,7 @@ export class DynamoRiskAlertRepository implements RiskAlertRepository {
                 TableName: this.getTableName(subdomain),
             })
         );
+        console.log(result.Items);
         return result.Items as RiskAlert[];
     }
 
